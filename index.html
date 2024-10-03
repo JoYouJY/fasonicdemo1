@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>DEMO FARPG</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="TemplateData/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="TemplateData/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="TemplateData/favicon-16x16.png">
+    <link rel="manifest" href="TemplateData/site.webmanifest">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.2/ethers.umd.js"></script>
+  </head>
+  <style>
+      #unity-loading-bar {
+        background-color: rgba(0, 0, 0, 0);
+      }
+      #unity-canvas {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+    </style>
+    <body style="background-color: #000000;"></body>
+    
+    
+     
+    <script>
+      function clearCache() {
+        o = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        var t = {
+          name: "UnityCache",
+          version: 3
+        }
+        o.deleteDatabase(t.name);
+        location.reload();
+      }
+    </script>
+    <div id="unity-container" class="unity-desktop">
+           
+      <canvas id="unity-canvas" width=1280 height=720 ></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"></div>
+
+        <div id="unity-rotate-button" style="display:none;"></div>
+        <div id="unity-build-title" style="display:none; color:beige">Rotate Screen</div>
+      </div>
+    </div>
+    <script>
+      var chains = "fantom";
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var warningBanner = document.querySelector("#unity-warning");
+      const ASPECT_RATIO = 16 / 9;
+
+      function resizeCanvas() {
+          var windowWidth = window.innerWidth;
+          var windowHeight = window.innerHeight;
+          var windowRatio = windowWidth / windowHeight;
+
+          var newWidth, newHeight;
+
+          if (windowRatio > ASPECT_RATIO) {
+              newHeight = windowHeight;
+              newWidth = newHeight * ASPECT_RATIO;
+          } else {
+              newWidth = windowWidth;
+              newHeight = newWidth / ASPECT_RATIO;
+          }
+
+          canvas.style.width = newWidth + 'px';
+          canvas.style.height = newHeight + 'px';
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas(); 
+    </script>
+    <script  src="./index.js"></script> 
+    <script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+     
+      var warningBanner = document.querySelector("#unity-warning");
+      
+
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/Build.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/Build.data",
+        frameworkUrl: buildUrl + "/Build.framework.js",
+        codeUrl: buildUrl + "/Build.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Jojo Dream Studio",
+        productName: "FateAdventureRPG",
+        productVersion: "1.0.0",
+        showBanner: unityShowBanner,
+      };
+    
+      loadingBar.style.display = "block";
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          window.unityInstance = unityInstance;
+          loadingBar.style.display = "none";
+         
+          setTimeout(switchToFantom, 3127);
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+    
+    <script>
+      
+      
+  </script>
+
+
+
+
+
+</html>
